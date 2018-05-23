@@ -12,17 +12,30 @@
 LICENSE = "CLOSED"
 LIC_FILES_CHKSUM = ""
 
-SRC_URI = "git://github.com/ardazishvili/snapper.git;protocol=https"
+SRC_URI = "git://github.com/ardazishvili/snapper;protocol=https"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
-SRCREV = "25c206686bd00862fcb15cc268a31fa0f9d33c94"
+SRCREV = "6837a59d6dd009b875f43436d1cf91fe55d2b5df"
 
 DEPENDS += " protobuf-native grpc-native grpc"
 S = "${WORKDIR}/git"
 
 inherit cmake
 
-# Specify any options you want to pass to cmake using EXTRA_OECMAKE:
-EXTRA_OECMAKE = ""
+do_configure () {
+    cd server
+    mkdir cbuild && cd cbuild
+    cmake ../
+}
+
+do_compile () {
+    cd server/cbuild
+    make
+}
+
+do_install () {
+    install -d ${D}${bindir}/
+    install -m 0755 ${S}/server/cbuild/snapper ${D}${bindir}/ 
+}
 
